@@ -1,0 +1,487 @@
+<!DOCTYPE html>
+<html lang="en" class="h-full">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Cinebook - Universe</title>
+  
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&family=Playfair+Display:wght@700;800&display=swap" rel="stylesheet">
+  
+  <style>
+    body { font-family: 'Poppins', sans-serif; overflow-x: hidden; }
+    .logo-font { font-family: 'Playfair Display', serif; }
+    
+    .gradient-bg {
+      background: linear-gradient(135deg, #424874 0%, #353a5c 50%, #2a2f4a 100%);
+      min-height: 100vh;
+      position: relative;
+    }
+
+    @keyframes float {
+        0% { transform: translate(0px, 0px) scale(1); }
+        33% { transform: translate(30px, -50px) scale(1.1); }
+        66% { transform: translate(-20px, 20px) scale(0.9); }
+        100% { transform: translate(0px, 0px) scale(1); }
+    }
+    .animate-blob { animation: float 10s infinite; }
+    .animation-delay-2000 { animation-delay: 2s; }
+    .animation-delay-4000 { animation-delay: 4s; }
+
+    .glass-card {
+      background: rgba(244, 238, 255, 0.05);
+      backdrop-filter: blur(12px);
+      border: 1px solid rgba(166, 177, 225, 0.1);
+      box-shadow: 0 8px 32px rgba(0, 0, 0, 0.2);
+      transition: all 0.3s ease;
+    }
+
+    .sidebar-card {
+      background: rgba(244, 238, 255, 0.12);
+      backdrop-filter: blur(16px);
+      border: 1px solid rgba(166, 177, 225, 0.2);
+      box-shadow: 0 8px 32px rgba(0, 0, 0, 0.25);
+      transition: all 0.3s ease;
+    }
+    
+    .search-input {
+        background: rgba(42, 47, 74, 0.6);
+        border: 1px solid rgba(166, 177, 225, 0.2);
+        color: #F4EEFF;
+        transition: all 0.3s ease;
+    }
+    .search-input:focus {
+        background: rgba(42, 47, 74, 0.9);
+        border-color: #DCD6F7;
+        outline: none;
+    }
+
+    .media-card:hover { transform: translateY(-5px); box-shadow: 0 12px 40px rgba(0,0,0,0.3); }
+    .media-card .overlay {
+        opacity: 0;
+        background: rgba(42, 47, 74, 0.95);
+        transition: opacity 0.3s ease;
+    }
+    .media-card:hover .overlay { opacity: 1; }
+
+    .icon-btn {
+        background: rgba(255, 255, 255, 0.1);
+        border: 1px solid rgba(255, 255, 255, 0.2);
+        transition: transform 0.2s;
+    }
+    .icon-btn:hover { transform: scale(1.15); background: rgba(255, 255, 255, 0.2); }
+
+    .mode-btn-active { background-color: #A6B1E1; color: #2a2f4a; font-weight: bold; }
+    .mode-btn-passive { color: #A6B1E1; border: 1px solid #A6B1E1; }
+
+    .hidden { display: none !important; }
+    ::-webkit-scrollbar { width: 6px; }
+    ::-webkit-scrollbar-thumb { background: rgba(166, 177, 225, 0.3); border-radius: 10px; }
+  </style>
+</head>
+<body class="h-full gradient-bg text-[#F4EEFF]">
+
+  <div class="fixed inset-0 overflow-hidden pointer-events-none -z-10">
+      <div class="absolute top-0 left-1/4 w-96 h-96 bg-[#A6B1E1] rounded-full mix-blend-overlay filter blur-[100px] opacity-20 animate-blob"></div>
+      <div class="absolute top-0 right-1/4 w-96 h-96 bg-[#DCD6F7] rounded-full mix-blend-overlay filter blur-[100px] opacity-20 animate-blob animation-delay-2000"></div>
+      <div class="absolute -bottom-32 left-1/3 w-96 h-96 bg-[#424874] rounded-full mix-blend-overlay filter blur-[100px] opacity-30 animate-blob animation-delay-4000"></div>
+  </div>
+
+  <div id="login-screen" class="relative min-h-full flex flex-col items-center justify-center px-4 py-12">
+    <div class="text-center mb-10 fade-in relative z-10">
+        <h1 class="text-6xl font-bold logo-font tracking-tight mb-2 text-[#DCD6F7] drop-shadow-lg">Cinebook</h1>
+        <p class="text-sm tracking-[0.3em] uppercase opacity-70 text-[#A6B1E1]">Discover. Rate. Enjoy.</p>
+    </div>
+
+    <div class="w-full max-w-md glass-card rounded-3xl p-8 fade-in relative z-10">
+      <h3 id="formTitle" class="text-2xl font-semibold text-center mb-8 text-[#F4EEFF]">Welcome Back</h3>
+      <div class="space-y-4">
+        <input type="text" id="username" class="w-full px-5 py-4 rounded-xl search-input text-sm" placeholder="Username">
+        <input type="password" id="password" class="w-full px-5 py-4 rounded-xl search-input text-sm" placeholder="Password">
+        
+        <div id="favSection" class="hidden space-y-4 pt-4 border-t border-[#A6B1E1]/20">
+            <p class="text-[10px] uppercase tracking-wider text-center text-[#A6B1E1] font-bold">Add 3 Favorites</p>
+            <div class="grid grid-cols-3 gap-2">
+                <input type="text" id="favMovie1" class="w-full px-2 py-2 rounded-lg search-input text-xs" placeholder="Movie 1">
+                <input type="text" id="favMovie2" class="w-full px-2 py-2 rounded-lg search-input text-xs" placeholder="Movie 2">
+                <input type="text" id="favMovie3" class="w-full px-2 py-2 rounded-lg search-input text-xs" placeholder="Movie 3">
+            </div>
+            <div class="grid grid-cols-3 gap-2">
+                <input type="text" id="favBook1" class="w-full px-2 py-2 rounded-lg search-input text-xs" placeholder="Book 1">
+                <input type="text" id="favBook2" class="w-full px-2 py-2 rounded-lg search-input text-xs" placeholder="Book 2">
+                <input type="text" id="favBook3" class="w-full px-2 py-2 rounded-lg search-input text-xs" placeholder="Book 3">
+            </div>
+        </div>
+        <button onclick="handleAuth()" id="mainBtn" class="w-full py-3.5 rounded-xl font-bold bg-[#DCD6F7] text-[#424874] hover:bg-white transition shadow-lg mt-4">Log In</button>
+      </div>
+      <div class="mt-6 text-center space-y-4">
+        <p id="toggleText" class="text-xs text-[#A6B1E1] cursor-pointer" onclick="toggleMode()">Don't have an account? <span class="font-bold underline">Sign Up</span></p>
+        <button onclick="skipLogin()" class="text-xs text-[#A6B1E1] hover:text-white">Continue as Guest</button>
+      </div>
+      <p id="msg" class="text-center text-xs mt-4 h-4 text-pink-300 font-mono"></p>
+    </div>
+  </div>
+
+  <div id="dashboard-screen" class="hidden w-full h-full overflow-y-auto">
+    <header class="sticky top-0 z-50 bg-[#2a2f4a]/95 backdrop-blur-md border-b border-[#A6B1E1]/10 px-8 py-4 flex justify-between items-center shadow-lg">
+        <h1 class="text-2xl font-bold logo-font tracking-tight text-[#DCD6F7]">Cinebook</h1>
+        <div class="flex items-center gap-4">
+            <span id="displayUser" class="text-sm font-bold text-white hidden sm:block">Guest</span>
+            <div onclick="logout()" class="w-10 h-10 rounded-full bg-gradient-to-tr from-[#A6B1E1] to-[#424874] flex items-center justify-center font-bold cursor-pointer hover:opacity-80 border border-white/20">U</div>
+        </div>
+    </header>
+
+    <main class="w-full px-6 py-8 max-w-[1600px] mx-auto grid grid-cols-1 lg:grid-cols-12 gap-8">
+      
+      <div class="lg:col-span-9 space-y-8">
+        
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+            <div class="glass-card rounded-2xl p-6 relative">
+                <div class="flex justify-between items-center mb-4">
+                    <h3 class="font-bold text-lg text-[#F4EEFF]">Search & Rate</h3>
+                    <div class="flex gap-2">
+                        <button onclick="setMainMode('movie')" id="btnMainMovie" class="px-3 py-1 text-[10px] rounded-lg transition-all mode-btn-active">MOVIES</button>
+                        <button onclick="setMainMode('book')" id="btnMainBook" class="px-3 py-1 text-[10px] rounded-lg transition-all mode-btn-passive">BOOKS</button>
+                    </div>
+                </div>
+                <div class="relative">
+                    <input type="text" id="main-search" placeholder="Search a movie to rate..." class="w-full px-4 py-3 rounded-xl search-input text-sm">
+                    <button onclick="getRecommendations('main')" class="absolute right-3 top-2.5 text-[#A6B1E1] hover:text-white">🔍</button>
+                </div>
+                <div id="main-search-results" class="mt-2"></div>
+            </div>
+
+            <div class="glass-card rounded-2xl p-6 relative">
+                <div class="flex justify-between items-center mb-4">
+                    <h3 class="font-bold text-lg text-[#F4EEFF]">AI Smart Recs</h3>
+                    <div class="flex gap-2">
+                        <button onclick="setAiMode('movie')" id="btnAiMovie" class="px-3 py-1 text-[10px] rounded-lg transition-all mode-btn-active">MOVIES</button>
+                        <button onclick="setAiMode('book')" id="btnAiBook" class="px-3 py-1 text-[10px] rounded-lg transition-all mode-btn-passive">BOOKS</button>
+                    </div>
+                </div>
+                <div class="relative">
+                    <input type="text" id="recommendation-search" placeholder="Enter a movie you like..." class="w-full px-4 py-3 rounded-xl search-input text-sm">
+                    <button onclick="getRecommendations('rec')" class="absolute right-3 top-2.5 text-[#DCD6F7] hover:text-white">✨</button>
+                </div>
+                <div id="rec-search-results" class="mt-2"></div>
+            </div>
+        </div>
+
+        <section>
+            <div class="flex items-center gap-3 mb-5 px-1 border-b border-[#A6B1E1]/10 pb-3">
+                <span class="text-2xl">🎬</span>
+                <h3 class="text-xl font-bold tracking-wide text-[#DCD6F7]">Movies For You</h3>
+            </div>
+            <div id="movies-for-you-container" class="grid grid-cols-2 md:grid-cols-4 gap-5">
+                <div class="glass-card rounded-2xl p-8 col-span-full text-center opacity-50"><p class="animate-pulse">Loading personalized cinema...</p></div>
+            </div>
+        </section>
+
+        <section>
+            <div class="flex items-center gap-3 mb-5 px-1 border-b border-[#A6B1E1]/10 pb-3">
+                <span class="text-2xl">📚</span>
+                <h3 class="text-xl font-bold tracking-wide text-[#DCD6F7]">Books For You</h3>
+            </div>
+            <div id="books-for-you-container" class="grid grid-cols-2 md:grid-cols-4 gap-5">
+                <div class="glass-card rounded-2xl p-8 col-span-full text-center opacity-50"><p class="animate-pulse">Loading literary gems...</p></div>
+            </div>
+        </section>
+      </div>
+
+      <aside class="lg:col-span-3 space-y-6 h-fit sticky top-28">
+        
+        <div class="sidebar-card rounded-2xl p-5">
+            <h4 class="text-xs font-bold text-[#A6B1E1] uppercase tracking-widest mb-4 flex items-center gap-2"><span class="text-pink-400">♥</span> Favorites</h4>
+            <div id="fav-movies-container" class="space-y-1 mb-2"></div>
+            <div id="fav-books-container" class="space-y-1"></div>
+        </div>
+
+        <div class="sidebar-card rounded-2xl p-5">
+            <h4 class="text-xs font-bold text-[#A6B1E1] uppercase tracking-widest mb-4 flex items-center gap-2"><span class="text-blue-400">☰</span> Your Lists</h4>
+            
+            <div class="mb-4">
+                <div class="flex justify-between items-center mb-1">
+                    <span class="text-xs font-semibold text-[#F4EEFF]">Watchlist</span>
+                    <span id="watchlist-count" class="text-[10px] bg-[#424874] text-[#DCD6F7] px-1.5 rounded">0</span>
+                </div>
+                <div id="watchlist-container" class="max-h-40 overflow-y-auto space-y-1 pr-1"></div>
+            </div>
+
+            <div>
+                <div class="flex justify-between items-center mb-1">
+                    <span class="text-xs font-semibold text-[#F4EEFF]">Readlist</span>
+                    <span id="readlist-count" class="text-[10px] bg-[#424874] text-[#DCD6F7] px-1.5 rounded">0</span>
+                </div>
+                <div id="readlist-container" class="max-h-40 overflow-y-auto space-y-1 pr-1"></div>
+            </div>
+        </div>
+
+        <div class="sidebar-card rounded-2xl p-5">
+             <h4 class="text-xs font-bold text-[#A6B1E1] uppercase tracking-widest mb-4 flex items-center gap-2"><span>⭐</span> Your Ratings</h4>
+             <div id="ratings-container" class="space-y-2 max-h-60 overflow-y-auto pr-1">
+                <p class="text-[10px] opacity-30 italic pl-1 text-[#A6B1E1]">No ratings yet</p>
+             </div>
+        </div>
+
+      </aside>
+    </main>
+  </div>
+
+  <script>
+    // 👇 URL'İ BURAYA YAZ
+    const API_URL = "https://cinebook-app-549174072852.europe-west3.run.app"; 
+
+    let isSignup = false, currentUser = "";
+    let mainMode = "movie", aiMode = "movie";
+    let myFavoritesMovies = [], myFavoritesBooks = [], watchlist = [], readlist = [];
+    let myRatings = []; // Puanları burada tutacağız
+
+    function toggleMode() {
+        isSignup = !isSignup;
+        document.getElementById('formTitle').innerText = isSignup ? "Create Account" : "Welcome Back";
+        document.getElementById('mainBtn').innerText = isSignup ? "Sign Up" : "Log In";
+        document.getElementById('toggleText').innerText = isSignup ? "Already have an account?" : "Don't have an account?";
+        document.getElementById('favSection').classList.toggle('hidden');
+    }
+
+    async function handleAuth() {
+        const u = document.getElementById('username').value;
+        const p = document.getElementById('password').value;
+        const msg = document.getElementById('msg');
+        msg.innerText = "Connecting...";
+
+        let mFavs = [], bFavs = [];
+        if(isSignup) {
+            mFavs = [document.getElementById('favMovie1').value, document.getElementById('favMovie2').value, document.getElementById('favMovie3').value].filter(Boolean);
+            bFavs = [document.getElementById('favBook1').value, document.getElementById('favBook2').value, document.getElementById('favBook3').value].filter(Boolean);
+        }
+
+        try {
+            const endpoint = isSignup ? "/signup" : "/login";
+            const res = await fetch(`${API_URL}${endpoint}`, { 
+                method: 'POST', headers: {'Content-Type': 'application/json'}, 
+                body: JSON.stringify({ username: u, password: p, fav_movies: mFavs, fav_books: bFavs }) 
+            });
+            const data = await res.json();
+            
+            if(res.ok) {
+                currentUser = u;
+                if(data.watchlist) watchlist = data.watchlist;
+                if(data.readlist) readlist = data.readlist;
+                if(data.fav_movies) myFavoritesMovies = data.fav_movies;
+                if(data.fav_books) myFavoritesBooks = data.fav_books;
+                if(data.ratings) myRatings = data.ratings.reverse(); // En son puanlananı en başa al
+                
+                switchToDashboard();
+            } else { 
+                let errorText = "Error";
+                if (typeof data.detail === 'string') errorText = data.detail;
+                else errorText = JSON.stringify(data.detail);
+                msg.innerText = errorText; 
+            }
+        } catch(e) { msg.innerText = "Connection Error"; console.error(e); }
+    }
+
+    function skipLogin() { currentUser = "Guest"; switchToDashboard(); }
+    function logout() { location.reload(); }
+
+    function switchToDashboard() {
+        document.getElementById('login-screen').classList.add('hidden');
+        document.getElementById('dashboard-screen').classList.remove('hidden');
+        document.getElementById('displayUser').innerText = currentUser;
+        renderSidebar();
+        if(currentUser !== "Guest") loadForYou();
+    }
+
+    async function loadForYou() {
+        try {
+            const res = await fetch(`${API_URL}/recommend/foryou/${currentUser}`);
+            const data = await res.json();
+            
+            const render = (list, id, type) => {
+                const el = document.getElementById(id);
+                if(list && list.length > 0) el.innerHTML = list.map(item => createCardHTML(type, item)).join('');
+                else el.innerHTML = '<div class="glass-card rounded-2xl p-6 col-span-full text-center opacity-40 text-sm">No recommendations yet. Rate items!</div>';
+            };
+            render(data.movie_recs || [], 'movies-for-you-container', 'movie');
+            render(data.book_recs || [], 'books-for-you-container', 'book');
+        } catch(e) { console.error(e); }
+    }
+
+    function createCardHTML(type, name) {
+        const safeName = name.replace(/'/g, "\\'");
+        const isMovie = type === 'movie';
+        const bgClass = isMovie ? 'bg-[#424874]' : 'bg-[#A6B1E1]'; 
+        const icon = isMovie ? '🎬' : '📖';
+
+        return `
+        <div class="glass-card rounded-2xl overflow-hidden media-card relative group h-52 cursor-pointer">
+             <div class="absolute inset-0 flex flex-col items-center justify-center p-4">
+                <div class="w-16 h-16 rounded-full ${bgClass} flex items-center justify-center text-3xl shadow-lg mb-3 text-white">
+                    ${icon}
+                </div>
+                <h4 class="font-bold text-sm text-[#F4EEFF] text-center leading-tight line-clamp-2 px-2" title="${name}">${name}</h4>
+                <span class="text-[10px] mt-2 text-[#A6B1E1] opacity-70 uppercase tracking-widest">AI MATCH</span>
+             </div>
+             
+             <div class="overlay absolute inset-0 flex flex-col items-center justify-center gap-2">
+                <div class="flex gap-4 mb-2">
+                    <button onclick="updateList('fav_${type}s', 'add', '${safeName}')" class="icon-btn w-10 h-10 rounded-full flex items-center justify-center text-pink-400 font-bold text-lg">♥</button>
+                    <button onclick="updateList('${isMovie?'watchlist':'readlist'}', 'add', '${safeName}')" class="icon-btn w-10 h-10 rounded-full flex items-center justify-center text-green-400 font-bold text-lg">+</button>
+                </div>
+                <div class="flex gap-1">
+                    ${[1,2,3,4,5].map(s => `
+                        <button onclick="rateItem('${safeName}', ${s})" class="text-lg text-gray-500 hover:text-yellow-400 transition hover:scale-125">★</button>
+                    `).join('')}
+                </div>
+                <span class="text-[10px] text-gray-400 uppercase tracking-widest">Rate This</span>
+             </div>
+        </div>`;
+    }
+
+    // MOD AYARLARI
+    window.setMainMode = (m) => {
+        mainMode = m;
+        document.getElementById('btnMainMovie').className = m==='movie' ? "px-3 py-1 text-[10px] rounded-lg transition-all mode-btn-active" : "px-3 py-1 text-[10px] rounded-lg transition-all mode-btn-passive";
+        document.getElementById('btnMainBook').className = m==='book' ? "px-3 py-1 text-[10px] rounded-lg transition-all mode-btn-active" : "px-3 py-1 text-[10px] rounded-lg transition-all mode-btn-passive";
+        document.getElementById('main-search').placeholder = `Search ${m} to rate...`;
+    };
+
+    window.setAiMode = (m) => {
+        aiMode = m;
+        document.getElementById('btnAiMovie').className = m==='movie' ? "px-3 py-1 text-[10px] rounded-lg transition-all mode-btn-active" : "px-3 py-1 text-[10px] rounded-lg transition-all mode-btn-passive";
+        document.getElementById('btnAiBook').className = m==='book' ? "px-3 py-1 text-[10px] rounded-lg transition-all mode-btn-active" : "px-3 py-1 text-[10px] rounded-lg transition-all mode-btn-passive";
+        document.getElementById('recommendation-search').placeholder = `Enter ${m} title...`;
+    };
+
+    async function getRecommendations(source) {
+        const mode = source === 'main' ? mainMode : aiMode;
+        const inputId = source === 'main' ? 'main-search' : 'recommendation-search';
+        const resId = source === 'main' ? 'main-search-results' : 'rec-search-results';
+        const val = document.getElementById(inputId).value;
+        const div = document.getElementById(resId);
+        if(!val) return;
+
+        div.innerHTML = `<div class="text-[10px] opacity-50 animate-pulse mt-2 text-[#A6B1E1]">Thinking...</div>`;
+
+        try {
+            const res = await fetch(`${API_URL}/recommend/${mode}/${val}`);
+            const data = await res.json();
+            
+            if(res.ok) {
+                const found = data.detected_movie || data.detected_book;
+                const safeFound = found.replace(/'/g, "\\'");
+                
+                if(source === 'main') {
+                    div.innerHTML = `
+                    <div class="mt-3 bg-[#424874]/40 p-3 rounded-xl border border-[#A6B1E1]/20 animate-fade-in">
+                        <div class="flex justify-between items-center mb-2">
+                            <span class="text-sm font-bold text-[#F4EEFF] truncate w-2/3">${found}</span>
+                            <span class="text-[10px] bg-green-500/20 text-green-300 px-1.5 py-0.5 rounded">FOUND</span>
+                        </div>
+                        <div class="flex gap-2 justify-center py-1">
+                            ${[1,2,3,4,5].map(s => `<button onclick="rateItem('${safeFound}', ${s})" class="text-xl hover:scale-125 transition text-gray-400 hover:text-yellow-400">★</button>`).join('')}
+                        </div>
+                    </div>`;
+                } else {
+                    div.innerHTML = `
+                    <div class="mt-3 bg-[#424874]/40 p-3 rounded-xl border border-[#A6B1E1]/20 animate-fade-in space-y-2">
+                        <p class="text-[10px] uppercase opacity-50 font-bold text-[#A6B1E1]">AI suggests:</p>
+                        ${data.recommendations.slice(0,3).map(r => `
+                            <div class="flex justify-between items-center text-xs border-b border-[#A6B1E1]/10 pb-1.5">
+                                <span class="truncate w-3/4 text-[#F4EEFF]">${r}</span>
+                                <button onclick="updateList('${mode==='movie'?'watchlist':'readlist'}', 'add', '${r.replace(/'/g, "\\'")}')" class="text-green-400 hover:scale-110 px-1">+</button>
+                            </div>`).join('')}
+                    </div>`;
+                }
+            } else { div.innerHTML = `<p class="text-xs text-red-300 mt-2">${data.detail}</p>`; }
+        } catch(e) { div.innerHTML = `<p class="text-xs text-red-300 mt-2">Error.</p>`; }
+    }
+
+    async function rateItem(name, score) {
+        try {
+            await fetch(`${API_URL}/rate`, {
+                method: 'POST', headers: {'Content-Type': 'application/json'},
+                body: JSON.stringify({ username: currentUser, item_type: mainMode, item_name: name, score: score })
+            });
+            
+            // Yerel listeleri anında güncelle (Sayfa yenilemeye gerek kalmasın)
+            myRatings.unshift({ name: name, score: score, type: mainMode });
+            
+            if(score >= 4) {
+                const listType = mainMode === 'movie' ? 'fav_movies' : 'fav_books';
+                updateList(listType, 'add', name);
+            } else {
+                renderSidebar(); // Sadece Ratings kısmı için güncelle
+            }
+
+            alert(`${name} -> Rated ${score}/5!`);
+            loadForYou(); 
+        } catch(e) { alert("Error rating."); }
+    }
+
+    async function updateList(listType, action, item) {
+        let targetList;
+        if(listType==='watchlist') targetList=watchlist;
+        else if(listType==='readlist') targetList=readlist;
+        else if(listType==='fav_movies') targetList=myFavoritesMovies;
+        else targetList=myFavoritesBooks;
+        
+        if(action === 'add' && !targetList.includes(item)) targetList.push(item);
+        if(action === 'remove' && targetList.includes(item)) targetList.splice(targetList.indexOf(item), 1);
+        
+        renderSidebar();
+
+        try {
+            await fetch(`${API_URL}/update_list`, {
+                method: 'POST', headers: {'Content-Type': 'application/json'},
+                body: JSON.stringify({ username: currentUser, list_type: listType, action: action, item_name: item })
+            });
+        } catch(e) { console.error("List sync fail", e); }
+    }
+
+    function renderSidebar() {
+        // FAVORITES
+        const renderFav = (list, id, icon) => {
+            const el = document.getElementById(id);
+            if(list.length===0) el.innerHTML = '<p class="text-[10px] opacity-30 italic pl-1 text-[#A6B1E1]">None</p>';
+            else el.innerHTML = list.map(i => `<div class="text-xs py-1.5 border-b border-[#A6B1E1]/10 flex items-center gap-2 text-[#F4EEFF]"><span class="opacity-50 text-[10px]">${icon}</span> ${i}</div>`).join('');
+        };
+        renderFav(myFavoritesMovies, 'fav-movies-container', '🎬');
+        renderFav(myFavoritesBooks, 'fav-books-container', '📖');
+
+        // LISTS
+        const renderList = (list, id, countId, type) => {
+            document.getElementById(countId).innerText = list.length;
+            const el = document.getElementById(id);
+            if(list.length===0) el.innerHTML = '<p class="text-[10px] opacity-30 italic pl-1 text-[#A6B1E1]">Empty</p>';
+            else el.innerHTML = list.map((item) => `
+                <div class="flex justify-between items-center text-xs py-1.5 border-b border-[#A6B1E1]/10 group hover:bg-white/5 px-1 rounded transition">
+                    <span class="truncate w-3/4 text-[#F4EEFF]">${item}</span>
+                    <button onclick="updateList('${type}', 'remove', '${item.replace(/'/g, "\\'")}')" class="opacity-0 group-hover:opacity-100 text-red-400 hover:text-red-300 px-1">✕</button>
+                </div>`).join('');
+        };
+        renderList(watchlist, 'watchlist-container', 'watchlist-count', 'watchlist');
+        renderList(readlist, 'readlist-container', 'readlist-count', 'readlist');
+
+        // RATINGS (YENİ)
+        const ratingEl = document.getElementById('ratings-container');
+        if(myRatings.length === 0) {
+            ratingEl.innerHTML = '<p class="text-[10px] opacity-30 italic pl-1 text-[#A6B1E1]">No ratings yet</p>';
+        } else {
+            ratingEl.innerHTML = myRatings.map(r => {
+                const stars = '★'.repeat(r.score) + '<span class="opacity-20">' + '★'.repeat(5 - r.score) + '</span>';
+                return `
+                <div class="bg-black/20 p-2 rounded-lg flex justify-between items-center mb-1">
+                    <div class="flex flex-col w-3/4">
+                        <span class="text-xs font-bold text-[#F4EEFF] truncate">${r.name}</span>
+                        <span class="text-[10px] text-yellow-400">${stars}</span>
+                    </div>
+                    <span class="text-lg opacity-50">${r.type === 'movie' ? '🎬' : '📖'}</span>
+                </div>`;
+            }).join('');
+        }
+    }
+  </script>
+</body>
+</html>
